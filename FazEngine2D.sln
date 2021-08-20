@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FazEngine2D", "FazEngine2D\FazEngine2D.csproj", "{A307FA37-B041-4269-80D2-56AB61F85473}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A307FA37-B041-4269-80D2-56AB61F85473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A307FA37-B041-4269-80D2-56AB61F85473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A307FA37-B041-4269-80D2-56AB61F85473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A307FA37-B041-4269-80D2-56AB61F85473}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7DC7E223-8EDD-4ACE-995D-D30DCCFBF17C}
+	EndGlobalSection
+EndGlobal
