@@ -49,9 +49,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Classes.cs" />
+    <Compile Include="Classes\Addons\Addon.cs" />
+    <Compile Include="Classes\Audio\AudioFile.cs" />
+    <Compile Include="Classes\GameObject.cs" />
+    <Compile Include="Classes\GameWindow.cs" />
+    <Compile Include="Classes\Addons\Script.cs" />
+    <Compile Include="Core\Audio\AudioSystem.cs" />
+    <Compile Include="Core\Debug.cs" />
     <Compile Include="Core\EngineCore.cs" />
-    <Compile Include="Extentions\Extentions.cs" />
+    <Compile Include="Extentions\DebugExt.cs" />
+    <Compile Include="Extentions\ObjectExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
