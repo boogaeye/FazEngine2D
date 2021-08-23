@@ -11,7 +11,7 @@ namespace FazEngine2D.Classes.Addons
     {
         public virtual void Start()
         {
-            this.Log(" Has started");
+            this.Log("Has started");
         }
         public virtual void Update()
         {

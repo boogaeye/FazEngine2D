@@ -12,54 +12,69 @@ namespace FazEngine2D.Classes
 {
     using FazEngine2D.Extentions;
     using FazEngine2D.Classes.Addons;
-    public class GameObject : object
+    using FazEngine2D.Classes.Audio;
+    using FazEngine2D.Attributes;
+    public class GameObject : object, IDisposable
     {
         public string Name;
         public object OgObj;
+        public GameWindow Scene;
         public List<Addon> Addons = new List<Addon>();
+        public Vector2 Position = new Vector2();
+        public bool Disposed { get; private set; } = false;
         public void AddAddon(Addon addon)
         {
+            if (addon.GetType().GetCustomAttributes(typeof(NonAddable)).Any())
+            {
+                addon.Warn($"{addon} cant be added because its a nonaddable");
+                return;
+            }
             addon.SetGameObject(this);
             Addons.Add(addon);
+            addon.Log($"Added {addon.Name} to {Name}");
         }
-        public Addon GetAddon<T>() where T : Addon
+        public T GetAddon<T>() where T : Addon
         {
-            foreach (T a in Addons)
+            foreach (T a in Addons.Where(e => e.GetType() == typeof(T)))
             {
                 return a;
             }
             return null;
         }
-        public Addon[] GetAddons(Type T)
+        public Addon[] GetAddons<T>() where T : Addon
         {
-            return Addons.Where(e => e.GetType().Name == T.Name).ToArray();
+            return Addons.Where(e => e.GetType() == typeof(T) || e.GetType().BaseType == typeof(T)).ToArray();
+        }
+
+        public void Dispose()
+        {
+            var ad = new List<Addon>(Addons);
+            foreach (Addon a in ad)
+            {
+                a.Dispose();
+            }
+            Disposed = true;
+            Scene.activeGameObjects.Remove(this);
         }
 
         public GameObject(string name, object obj, GameWindow gameWindow)
         {
             Name = name;
             OgObj = obj;
+            Scene = gameWindow;
             gameWindow.activeGameObjects.Add(this);
         }
         public GameObject(string name, GameWindow gameWindow)
         {
             Name = name;
             OgObj = this;
+            Scene = gameWindow;
             gameWindow.activeGameObjects.Add(this);
+            this.Log("Created myself yay!");
         }
-    }
-
-    public class Bruh : Script
-    {
-        public override void Start()
+        public GameObject()
         {
-            base.Start();
-            this.Log($"Hi my name is {Name}");
-        }
-        public override void Update()
-        {
-            base.Update();
-            this.SetGameObject(this.GameObject);
+            
         }
     }
 }

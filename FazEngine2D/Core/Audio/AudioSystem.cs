@@ -36,12 +36,14 @@ namespace FazEngine2D.Core.Audio
                 soundPlayer.SoundLocation = EngineInstance.SaveLoc + @"\Sounds\" + AudioFile.Location;
                 try
                 {
+                    soundPlayer.Stop();
                     soundPlayer.Play();
+                    if (EngineInstance.EngineDebug)
                     Debug.Log("Sound Played");
                 }
                 catch (FileNotFoundException e)
                 {
-                    Debug.Error($"FileNotFound 404\n{e.Message}");
+                    Debug.Error($"FileNotFound 404\n{e.Message}\n{EngineInstance.SaveLoc + @"\Sounds\" + AudioFile.Location}");
                 }
             }
             else

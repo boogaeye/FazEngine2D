@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using FazEngine2D.Classes;
+using FazEngine2D.Classes.Addons;
 using FazEngine2D.Classes.Audio;
 using FazEngine2D.Extentions;
 using FazEngine2D.Core.Audio;
@@ -15,48 +16,46 @@ using System.Diagnostics;
 
 namespace FazEngine2D.Core
 {
-    public class Engine
-    {
-        static void Main(string[] args) => new EngineInstance().EngineStartUp();
-        
-    }
-    public class EngineInstance
+    public sealed class EngineInstance
     {
         public static List<GameWindow> Windows = new List<GameWindow>();
+        public static EngineInstance Instance;
         public static string SaveLoc;
-        public void EngineStartUp()
+        public static string Name;
+        public static bool EngineDebug = false;
+        public void EngineStartUp(ProjectInfo pi)
         {
+            Instance = this;
             Console.BackgroundColor = ConsoleColor.Blue;
             Console.WriteLine("FazEngine Started...");
             Debug.Log(Directory.GetCurrentDirectory());
+            Debug.Log("Waiting For Project...");
             Console.BackgroundColor = ConsoleColor.Black;
-            new GameWindow();
-            Windows[0].GameObject.AddAddon(new AudioSystem());
-            Windows[0].GameObject.AddAddon(new Bruh());
-            Debug.Log(Windows[0].activeGameObjects.Count);
-            ((AudioSystem)Windows[0].GameObject.GetAddon<AudioSystem>()).SetAudioFile(new AudioFile() { Location = "gunWeak.wav" });
-            ((AudioSystem)Windows[0].GameObject.GetAddon<AudioSystem>()).Play();
-            Windows[0].Form.ShowDialog();
+            ProjectStructure(pi);
             Console.ReadLine();
         }
-        
-        public void ProjectStartUp(string saveLocation)
+
+        void ProjectStructure(ProjectInfo pi)
         {
-            if (!Directory.Exists(saveLocation))
-            {
-                Directory.CreateDirectory(saveLocation);
-            }
-            if (!Directory.Exists(saveLocation + @"\Sounds"))
-            {
-                Directory.CreateDirectory(saveLocation + @"\Sounds");
-            }
-            SaveLoc = saveLocation;
+            Debug.Log("Starting Project Structuring");
+            Name = pi.Name;
+            Debug.Log($"Got {Name}");
+            SaveLoc = $@"{Name}\{pi.SavLoc}";
+            Debug.Log($"Got saving location {SaveLoc}");
+            ProjectStartUp(pi);
         }
-    }
-    
-    public class ProjectInfo
-    {
-        public string Name { get; }
-        public string SaveLocation { get; }
+        
+        void ProjectStartUp(ProjectInfo pi)
+        {
+            if (Name == null)
+            {
+                Debug.Warn("Project Could Not Be Set Up...");
+                return;
+            }
+            Directory.CreateDirectory(SaveLoc + @"\Sounds");
+            Directory.CreateDirectory(SaveLoc + @"\Sprites");
+            Debug.Log($"Directory Saves in {Directory.GetCurrentDirectory()}");
+            pi.Start();
+        }
     }
 }

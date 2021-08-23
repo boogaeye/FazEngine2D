@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A307FA37-B041-4269-80D2-56AB61F85473}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FazEngine2D</RootNamespace>
     <AssemblyName>FazEngine2D</AssemblyName>
@@ -31,35 +31,67 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>FazEngine2D.Core.Engine</StartupObject>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.Windows.Shell, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Windows.Shell.3.0.1.0\lib\net40\Microsoft.Windows.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.3\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Input.Manipulations" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\NonAddable.cs" />
     <Compile Include="Classes\Addons\Addon.cs" />
+    <Compile Include="Classes\Addons\Camera.cs" />
+    <Compile Include="Classes\Addons\RenderAddon.cs" />
+    <Compile Include="Classes\Addons\SpriteRenderObject.cs" />
     <Compile Include="Classes\Audio\AudioFile.cs" />
     <Compile Include="Classes\GameObject.cs" />
     <Compile Include="Classes\GameWindow.cs" />
     <Compile Include="Classes\Addons\Script.cs" />
+    <Compile Include="Classes\Input\InputEvent.cs" />
+    <Compile Include="Classes\Scene.cs" />
+    <Compile Include="Classes\Vector2.cs" />
+    <Compile Include="Classes\WindowHelper.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Core\Audio\AudioSystem.cs" />
     <Compile Include="Core\Debug.cs" />
     <Compile Include="Core\EngineCore.cs" />
+    <Compile Include="Core\ProjectInfo.cs" />
     <Compile Include="Extentions\DebugExt.cs" />
     <Compile Include="Extentions\ObjectExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Classes\WindowHelper.resx">
+      <DependentUpon>WindowHelper.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
