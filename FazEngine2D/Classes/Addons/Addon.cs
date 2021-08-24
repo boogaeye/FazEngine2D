@@ -12,6 +12,7 @@ namespace FazEngine2D.Classes.Addons
         public GameObject GameObject { get; private set; }
         public object Obj { get => this; }
         public string Name { get => GetType().Name; }
+        public bool IsActive = true;
         bool setGO = false;
         public bool Disposed { get; private set; } = false;
         public void SetGameObject(GameObject gameObject)
@@ -29,5 +30,14 @@ namespace FazEngine2D.Classes.Addons
         {
             Disposed = true;
         }
+        
     }
+    public class NoActiveAddonException : Exception
+    {
+        public NoActiveAddonException(string message) : base(message)
+        {
+            
+        }
+    }
+
 }

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FazEngine2D.Classes
+namespace FazEngine2D.Attributes
 {
-    public abstract class Scene
+    public class NonAddonAdder : Attribute
     {
-
+        
     }
 }

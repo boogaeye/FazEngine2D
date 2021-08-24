@@ -7,12 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using FazEngine2D.Classes;
-using FazEngine2D.Classes.Addons;
-using FazEngine2D.Classes.Audio;
-using FazEngine2D.Extentions;
-using FazEngine2D.Core.Audio;
-using System.Windows.Input;
-using System.Diagnostics;
 
 namespace FazEngine2D.Core
 {
@@ -54,6 +48,7 @@ namespace FazEngine2D.Core
             }
             Directory.CreateDirectory(SaveLoc + @"\Sounds");
             Directory.CreateDirectory(SaveLoc + @"\Sprites");
+            Directory.CreateDirectory(SaveLoc + @"\Music");
             Debug.Log($"Directory Saves in {Directory.GetCurrentDirectory()}");
             pi.Start();
         }

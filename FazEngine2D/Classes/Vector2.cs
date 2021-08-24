@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 namespace FazEngine2D.Classes
 {
     using System.Windows.Forms;
-    public class Vector2
+    public sealed class Vector2
     {
         public float X;
         public float Y;
+        public static Vector2 operator -(Vector2 a, Vector2 b) => new Vector2(a.X - b.X, a.Y - b.Y);
         public Vector2(float x, float y)
         {
             X = x;

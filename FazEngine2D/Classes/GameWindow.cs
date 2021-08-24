@@ -9,11 +9,14 @@ namespace FazEngine2D.Classes
 {
     using FazEngine2D.Extentions;
     using FazEngine2D.Classes.Addons;
+    using FazEngine2D.Classes.Addons.Visual;
+    using FazEngine2D.Classes.Addons.Visual.Rendering;
     using FazEngine2D.Core;
     using System.Drawing;
     using System.Threading;
+    using System.Windows.Input;
 
-    public class GameWindow : GameObject
+    public class GameWindow : GameObject, IDisposable
     {
         WindowHelper Window;
         public List<GameObject> activeGameObjects = new List<GameObject>();
@@ -21,6 +24,20 @@ namespace FazEngine2D.Classes
         Thread AppLoop = null;
         public Camera CurrentRenderingCamera = null;
         public bool IsChangingScene { get; private set; } = false;
+        public void ChangeBGColor(Color color)
+        {
+            if (Window == null)
+            {
+                Debug.Warn("Unable to change background color of window");
+                return;
+            }
+            Window.BackColor = color;
+        }
+        public new void Dispose()
+        {
+
+            Window.BeginInvoke((MethodInvoker)delegate { Application.Exit(); });
+        }
         public GameWindow()
         {
             Name = "GameWindow";
@@ -31,13 +48,21 @@ namespace FazEngine2D.Classes
             IsChangingScene = true;
             StartUpMethod();
         }
-        public void ChangeFormScene(WindowHelper form)
+        public void ChangePreset(PresetWindow form)
         {
-            return;
             IsChangingScene = true;
-            //Window.Close();
-            //Window = form;
-            Task.Run(() => FormStarter());
+            GameLoop.Abort();
+            var st = new List<GameObject>(activeGameObjects);
+            foreach (GameObject g in st)
+            {
+                if (g != this)
+                {
+                    g.Dispose();
+                }
+            }
+            form.Load(this);
+            GameLoop = new Thread(UpdateLoop);
+            GameLoop.Start();
         }
 
         public void StartUpMethod()
@@ -49,13 +74,13 @@ namespace FazEngine2D.Classes
         }
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (IsChangingScene) return;
             var gh = new List<GameObject>(activeGameObjects);
             foreach (GameObject g in gh)
             {
                 g.Dispose();
             }
             Core.EngineInstance.Windows.Remove(this);
+            GameLoop.Abort();
             if (Core.EngineInstance.Windows.Count == 0)
             {
                 Console.Title = "Close?";
@@ -64,7 +89,8 @@ namespace FazEngine2D.Classes
             Window.FormClosed -= Window_Closed;
             Window.Paint -= Window_Paint;
             Window.Move -= Window_Move;
-            GameLoop.Abort();
+            Window.KeyDown -= Window_KeyDown;
+            
         }
 
 
@@ -119,10 +145,23 @@ namespace FazEngine2D.Classes
             Window.FormClosed += Window_Closed;
             Window.Paint += Window_Paint;
             Window.Move += Window_Move;
+            Window.KeyDown += Window_KeyDown;
             IsChangingScene = false;
             
             Application.Run(Window);
             //Application.Run();
+        }
+
+        private void Window_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            var h = new List<GameObject>(activeGameObjects);
+            foreach (GameObject g in h)
+            {
+                foreach (Script s in g.GetAddons<Script>())
+                {
+                    s.KeyPressEvent(e.KeyCode, Input.KeyPressType.Down);
+                }
+            }
         }
 
         private void Window_Move(object sender, EventArgs e)
@@ -147,12 +186,28 @@ namespace FazEngine2D.Classes
                 offsetX = CurrentRenderingCamera.GameObject.Position.X;
                 offsetY = CurrentRenderingCamera.GameObject.Position.Y;
             }
-            foreach (GameObject ig in activeGameObjects)
+            var gl = new List<GameObject>(activeGameObjects);
+            if (CurrentRenderingCamera == null) return;
+            foreach (GameObject ig in gl)
             {
                 foreach (SpriteRenderObject sp in ig.GetAddons<SpriteRenderObject>())
                 {
                     if (sp.Image != null)
-                    g.DrawImage(sp.Image, (ig.Position.X * Window.Width / wdth) + (offsetX * -1), (ig.Position.Y * Window.Height / hight) + (offsetY * -1), sp.Width * Window.Width / wdth, sp.Height * Window.Height / hight);
+                    {
+                        if (CurrentRenderingCamera.SizeFixerEnabled)
+                        {
+                            g.DrawImage(sp.Image, (ig.Position.X * Window.Width / wdth) + (offsetX * -1), (ig.Position.Y * Window.Height / hight) + (offsetY * -1), sp.Width * Window.Width / wdth, sp.Height * Window.Height / hight);
+                        }
+                        else
+                        {
+                            g.DrawImage(sp.Image, (ig.Position.X * Window.Width / wdth) + (offsetX * -1), (ig.Position.Y * Window.Height / hight) + (offsetY * -1), sp.Width, sp.Height);
+                        }
+                    }
+                }
+                foreach (TextRenderObject sp in ig.GetAddons<TextRenderObject>())
+                {
+                    if (sp.Text != null)
+                    g.DrawString(sp.Text, new Font(FontFamily.GenericMonospace, 20), Brushes.Black, (ig.Position.X * Window.Width / wdth) + (offsetX * -1), (ig.Position.Y * Window.Height / hight) + (offsetY * -1));
                     
                 }
             }
@@ -167,14 +222,13 @@ namespace FazEngine2D.Classes
             int Frame = 0;
             while (GameLoop.IsAlive)
             {
-                
-                Window.BeginInvoke((MethodInvoker)delegate{ if (Window.Handle != null) Window.Refresh(); Window.Bounds = new Rectangle((int)this.Position.X, (int)this.Position.Y, Window.Width, Window.Height); });
                 Thread.Sleep(1);
                 if (FazEngine2D.Core.EngineInstance.EngineDebug)
                 {
                     this.Log($"Window Update Frame {Frame}");
                 }
-                foreach (GameObject g in activeGameObjects)
+                var gs = new List<GameObject>(activeGameObjects);
+                foreach (GameObject g in gs)
                 {
                     try
                     {
@@ -183,7 +237,7 @@ namespace FazEngine2D.Classes
                             try
                             {
                                 if (!addon.Disposed)
-                                    addon.Update();
+                                    addon.Update(Frame);
                             }
                             catch (Exception e)
                             {
@@ -191,24 +245,13 @@ namespace FazEngine2D.Classes
                             }
 
                         }
-                        foreach (SpriteRenderObject addon in g.GetAddons<SpriteRenderObject>())
-                        {
-                            try
-                            {
-                                if (!addon.Disposed)
-                                    addon.Update();
-                            }
-                            catch (Exception e)
-                            {
-                                Debug.Error(e);
-                            }
-                        }
                     }catch(Exception e)
                     {
                         Debug.Log(e.Message);
                     }
                     
                 }
+                Window.BeginInvoke((MethodInvoker)delegate{ if (Window.Handle != null) Window.Refresh(); Window.Bounds = new Rectangle((int)this.Position.X, (int)this.Position.Y, Window.Width, Window.Height); Window.Text = Name; });
                 Frame++;
             }
         }

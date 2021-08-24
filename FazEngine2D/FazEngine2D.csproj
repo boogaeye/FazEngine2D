@@ -62,22 +62,24 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\NonAddable.cs" />
+    <Compile Include="Attributes\OnlyAddableTo.cs" />
+    <Compile Include="Attributes\NonAddonAdder.cs" />
     <Compile Include="Classes\Addons\Addon.cs" />
-    <Compile Include="Classes\Addons\Camera.cs" />
-    <Compile Include="Classes\Addons\RenderAddon.cs" />
-    <Compile Include="Classes\Addons\SpriteRenderObject.cs" />
-    <Compile Include="Classes\Audio\AudioFile.cs" />
+    <Compile Include="Classes\Addons\Visual\Camera.cs" />
+    <Compile Include="Classes\Addons\Visual\Rendering\TextRenderObject.cs" />
+    <Compile Include="Classes\Addons\Visual\Rendering\SpriteRenderObject.cs" />
+    <Compile Include="Classes\Addons\Audio\AudioFile.cs" />
     <Compile Include="Classes\GameObject.cs" />
     <Compile Include="Classes\GameWindow.cs" />
     <Compile Include="Classes\Addons\Script.cs" />
     <Compile Include="Classes\Input\InputEvent.cs" />
-    <Compile Include="Classes\Scene.cs" />
+    <Compile Include="Classes\PresetWindow.cs" />
+    <Compile Include="Classes\Addons\Visual\Rendering\SpriteFile.cs" />
     <Compile Include="Classes\Vector2.cs" />
     <Compile Include="Classes\WindowHelper.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Core\Audio\AudioSystem.cs" />
+    <Compile Include="Classes\Addons\Audio\AudioSystem.cs" />
     <Compile Include="Core\Debug.cs" />
     <Compile Include="Core\EngineCore.cs" />
     <Compile Include="Core\ProjectInfo.cs" />
@@ -93,5 +95,6 @@
       <DependentUpon>WindowHelper.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
