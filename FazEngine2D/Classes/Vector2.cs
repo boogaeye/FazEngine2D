@@ -12,6 +12,7 @@ namespace FazEngine2D.Classes
         public float X;
         public float Y;
         public static Vector2 operator -(Vector2 a, Vector2 b) => new Vector2(a.X - b.X, a.Y - b.Y);
+        public static Vector2 operator +(Vector2 a, Vector2 b) => new Vector2(a.X + b.X, a.Y + b.Y);
         public Vector2(float x, float y)
         {
             X = x;
@@ -22,13 +23,17 @@ namespace FazEngine2D.Classes
             X = 0;
             Y = 0;
         }
-        public Vector2 Zero()
+        public static Vector2 Zero()
         {
             return new Vector2(0, 0);
         }
-        public Vector2 MiddleScreen()
+        public static Vector2 MiddleScreen()
         {
             return new Vector2(Screen.PrimaryScreen.Bounds.Width / 2, Screen.PrimaryScreen.Bounds.Height / 2);
+        }
+        public static Vector2 MiddleGameWindow(FazEngineWindow gameWindow)
+        {
+            return new Vector2(gameWindow.Transform.Scale.X / 2, gameWindow.Transform.Scale.Y / 2);
         }
         public override string ToString()
         {

@@ -9,7 +9,7 @@ namespace FazEngine2D.Classes.Input
     using System.Windows.Input;
     using FazEngine2D.Classes.Addons;
     using FazEngine2D.Attributes;
-    public class InputEvent : Addon
+    public class InputEvent
     {
         public static bool KeyDown(Key key)
         {

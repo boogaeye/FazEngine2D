@@ -13,21 +13,22 @@ namespace FazEngine2D.Classes
     using FazEngine2D.Extentions;
     using FazEngine2D.Classes.Addons;
     using FazEngine2D.Attributes;
-    public class GameObject : object, IDisposable
+    using FazEngine2D.Core;
+    public class GameObject : NamableObject, IDisposable
     {
-        public string Name;
-        public object OgObj;
-        public GameWindow Scene;
+        public FazEngineWindow FazEngineWindow;
         public List<Addon> Addons = new List<Addon>();
-        public Vector2 Position = new Vector2();
+        public GameObjectTransform Transform { get; } = new GameObjectTransform();
         public bool Disposed { get; private set; } = false;
+
         public GameObject FindGameObjectByName(string name)
         {
-            return Scene.activeGameObjects.Where(e => e.Name == name).FirstOrDefault();
+            return FazEngineWindow.gameObjects.Where(e => e.Name == name).FirstOrDefault();
         }
         public static GameObject FindGameObjectByNameStaticly(string name)
         {
-            return FazEngine2D.Core.EngineInstance.Windows[0].FindGameObjectByName(name);
+            
+            return FazEngine2D.Core.EngineInstance.FazEngineWindows[0].FindGameObjectByName(name);
         }
         public void AddAddon(Addon addon)
         {
@@ -54,7 +55,7 @@ namespace FazEngine2D.Classes
             {
                 return a;
             }
-            throw new NoActiveAddonException($"No Active Addon could be found on {this.Name}");
+            return null;
         }
         public T GetAllAddon<T>() where T : Addon
         {
@@ -73,41 +74,39 @@ namespace FazEngine2D.Classes
             return Addons.Where(e => e.GetType() == typeof(T) || e.GetType().BaseType == typeof(T)).ToArray();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
             var ad = new List<Addon>(Addons);
             foreach (Addon a in ad)
             {
                 a.Dispose();
             }
             Disposed = true;
-            Scene.activeGameObjects.Remove(this);
+            if (FazEngineWindow != null)
+            FazEngineWindow.gameObjects.Remove(this);
         }
 
-        public GameObject(string name, object obj, GameWindow gameWindow)
-        {
-            Name = name;
-            OgObj = obj;
-            Scene = gameWindow;
-            gameWindow.activeGameObjects.Add(this);
-        }
-        public GameObject(string name, GameWindow gameWindow)
+        
+        public GameObject(string name, FazEngineWindow gameWindow)
         {
             Name = name;
             OgObj = this;
-            Scene = gameWindow;
-            gameWindow.activeGameObjects.Add(this);
+            FazEngineWindow = gameWindow;
+            gameWindow.gameObjects.Add(this);
             this.Log("Created myself yay!");
         }
-        public GameObject(string name, List<Addon> addons, GameWindow gameWindow)
+        
+        public GameObject(string name, IEnumerable<Addon> addons, FazEngineWindow gameWindow)
         {
             Name = name;
             OgObj = this;
-            Scene = gameWindow;
-            Addons = addons;
-            gameWindow.activeGameObjects.Add(this);
+            FazEngineWindow = gameWindow;
+            Addons = addons.ToList();
+            gameWindow.gameObjects.Add(this);
             this.Log("Created myself yay!");
         }
+        
         public GameObject(string name, PresetWindow presetWindow)
         {
             Name = name;
@@ -116,7 +115,7 @@ namespace FazEngine2D.Classes
             {
                 throw new GameObjectAlreadyExistsException($"{Name} already exists in {presetWindow.Name}");
             }
-            this.Log($"Registered to {presetWindow.Name}");
+            this.Log($"Registered to {presetWindow.GetType().Name}");
             presetWindow.gameObjects.Add(this);
         }
         public GameObject()

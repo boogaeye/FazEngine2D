@@ -7,12 +7,19 @@ using System.Threading.Tasks;
 namespace FazEngine2D.Classes.Addons.Audio
 {
     using FazEngine2D.Core;
-    public sealed class AudioFile
+    using System.IO;
+    using System.Media;
+    public sealed class AudioFile : PreloadedObject
     {
         public string Location;
         public string GetLocation()
         {
             return $@"{EngineInstance.SaveLoc}\Sounds\{Location}";
+        }
+
+        public override void PreloadState()
+        {
+            throw new NotImplementedException();
         }
     }
 }

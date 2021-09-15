@@ -2,27 +2,38 @@
 namespace FazEngine2D.Classes.Addons.Audio
 {
     using System.IO;
-    using System.Media;
+    using System.Threading;
+    using WMPLib;
     using FazEngine2D.Classes.Addons;
     using FazEngine2D.Core;
     using FazEngine2D.Extentions;
-    public class AudioSystem : Addon
+    using System;
+
+    public sealed class AudioSystem : Addon, IDisposable
     {
-        SoundPlayer soundPlayer;
+        WindowsMediaPlayer soundPlayer;
         public AudioFile AudioFile;
+        public double Position { get => soundPlayer.controls.currentPosition; set => soundPlayer.controls.currentPosition = value; }
+        public double MaxPosition { get => soundPlayer.currentMedia.duration; }
+        public int Volume { get => soundPlayer.settings.volume; set => soundPlayer.settings.volume = value; }
         public AudioSystem()
         {
             StartUpMethod();
         }
         void StartUpMethod()
         {
-            soundPlayer = new SoundPlayer();
+            
+            soundPlayer = new WindowsMediaPlayer();
             this.Log("SoundPlayer Started");
+
         }
-        public new void Dispose()
+        public override void Dispose()
         {
-            soundPlayer.Stop();
+            base.Dispose();
+            Stop();
             soundPlayer = null;
+            
+            //Thread.Abort();
         }
         public void SetAudioFile(AudioFile audioFile)
         {
@@ -37,54 +48,35 @@ namespace FazEngine2D.Classes.Addons.Audio
                     Debug.Warn("Project Info is not defined please define it to continue using file locations");
                     return;
                 }
-                soundPlayer.SoundLocation = EngineInstance.SaveLoc + @"\Sounds\" + AudioFile.Location;
+                
                 try
                 {
-                    soundPlayer.Stop();
-                    soundPlayer.Play();
+                    soundPlayer.URL = AudioFile.GetLocation();
+                    soundPlayer.controls.play();
                     if (EngineInstance.EngineDebug)
-                    Debug.Log("Sound Played");
+                    this.Log("Sound Played");
                 }
                 catch (FileNotFoundException e)
                 {
-                    Debug.Error($"FileNotFound 404\n{e.Message}\n{EngineInstance.SaveLoc + @"\Sounds\" + AudioFile.Location}");
+                    this.Error($"FileNotFound 404\n{e.Message}\n{EngineInstance.SaveLoc + @"\Sounds\" + AudioFile.Location}");
+                }catch(ThreadAbortException)
+                {
+
                 }
             }
             else
             {
-                Debug.Warn("No Audio File Selected");
+                this.Warn("No Audio File Selected");
             }
         }
         public void Stop()
         {
-            soundPlayer.Stop();
+            soundPlayer.controls.stop();
         }
-        public void PlayAsLoop()
+
+        public override void CallFunctionsBasedOnValue(byte b)
         {
-            if (AudioFile != null)
-            {
-                if (EngineInstance.SaveLoc == null)
-                {
-                    Debug.Warn("Project Info is not defined please define it to continue using file locations");
-                    return;
-                }
-                soundPlayer.SoundLocation = EngineInstance.SaveLoc + @"\Sounds\" + AudioFile.Location;
-                try
-                {
-                    soundPlayer.Stop();
-                    soundPlayer.PlayLooping();
-                    if (EngineInstance.EngineDebug)
-                    Debug.Log("Sound Played Looped");
-                }
-                catch (FileNotFoundException e)
-                {
-                    Debug.Error($"FileNotFound 404\n{e.Message}\n{EngineInstance.SaveLoc + @"\Sounds\" + AudioFile.Location}");
-                }
-            }
-            else
-            {
-                Debug.Warn("No Audio File Selected");
-            }
+            throw new NotImplementedException();
         }
     }
 }

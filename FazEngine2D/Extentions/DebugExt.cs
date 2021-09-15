@@ -8,34 +8,47 @@ namespace FazEngine2D.Extentions
 {
     using FazEngine2D.Classes;
     using FazEngine2D.Classes.Addons;
+    using FazEngine2D.Core;
     public static class DebugExt
     {
-        public static void Log(this GameObject gameObj, object log, bool Beep = false)
+        public static void Log(this NamableObject gameObj, object log, bool Beep = false)
         {
-            if (Beep) Console.Beep();
-            Console.WriteLine($"[{gameObj.Name}] " + log);
+            Debug.Log($"[{gameObj.Name}] {log}", Beep);
         }
         public static void Log(this Addon gameObj, object log, bool Beep = false)
         {
-            if (Beep) Console.Beep();
             if (gameObj.GameObject == null)
             {
-                Console.WriteLine($"[Detached Object : {gameObj.Name}] {log}");
+                Debug.Log($"[Detached Object : {gameObj.Name}] {log}", Beep);
                 return;
             }
-            Console.WriteLine($"[{gameObj.GameObject.Name} : {gameObj.Name}] " + log);
+            Debug.Log($"[{gameObj.GameObject.Name} : {gameObj.Name}] {log}", Beep);
         }
         public static void Warn(this Addon gameObj, object log, bool Beep = false)
         {
-            if (Beep) Console.Beep();
-            Console.BackgroundColor = ConsoleColor.DarkYellow;
             if (gameObj.GameObject == null)
             {
-                Console.WriteLine($"[Detached Object : {gameObj.Name}] {log}");
+                Debug.Warn($"[Detached Object : {gameObj.Name}] {log}", Beep);
                 return;
             }
-            Console.WriteLine($"[{gameObj.GameObject.Name} : {gameObj.Name}] " + log);
-            Console.BackgroundColor = ConsoleColor.Black;
+            Debug.Warn($"[{gameObj.GameObject.Name} : {gameObj.Name}] {log}", Beep);
+        }
+        public static void Warn(this NamableObject gameObj, object log, bool Beep = false)
+        {
+            Debug.Warn($"[{gameObj.Name}] {log}", Beep);
+        }
+        public static void Error(this Addon gameObj, object log, bool Beep = true)
+        {
+            if (gameObj.GameObject == null)
+            {
+                Debug.Error($"[Detached Object : {gameObj.Name}] {log}", Beep);
+                return;
+            }
+            Debug.Error($"[{gameObj.GameObject.Name} : {gameObj.Name}] {log}", Beep);
+        }
+        public static void Error(this NamableObject gameObj, object log, bool Beep = true)
+        {
+            Debug.Error($"[{gameObj.Name}] {log}", Beep);
         }
     }
 }

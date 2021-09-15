@@ -7,35 +7,40 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Reflection;
 using FazEngine2D.Classes;
+using FazEngine2D.Classes.Addons;
 
 namespace FazEngine2D.Core
 {
     public sealed class EngineInstance
     {
-        public static List<GameWindow> Windows = new List<GameWindow>();
+        public static List<FazEngineWindow> FazEngineWindows = new List<FazEngineWindow>();
         public static EngineInstance Instance;
         public static string SaveLoc;
         public static string Name;
         public static bool EngineDebug = false;
+        void Log(object debug, bool Beep = false)
+        {
+            if (Beep) Console.Beep();
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("[Engine]" + debug.ToString());
+        }
         public void EngineStartUp(ProjectInfo pi)
         {
             Instance = this;
-            Console.BackgroundColor = ConsoleColor.Blue;
-            Console.WriteLine("FazEngine Started...");
-            Debug.Log(Directory.GetCurrentDirectory());
-            Debug.Log("Waiting For Project...");
-            Console.BackgroundColor = ConsoleColor.Black;
+            Log("Starting Faz Engine...");
+            Log(Directory.GetCurrentDirectory());
+            Log("Waiting For Project...");
             ProjectStructure(pi);
             Console.ReadLine();
         }
 
         void ProjectStructure(ProjectInfo pi)
         {
-            Debug.Log("Starting Project Structuring");
+            Log("Starting Project Structuring");
             Name = pi.Name;
-            Debug.Log($"Got {Name}");
+            Log($"Got {Name}");
             SaveLoc = $@"{Name}\{pi.SavLoc}";
-            Debug.Log($"Got saving location {SaveLoc}");
+            Log($"Got saving location {SaveLoc}");
             ProjectStartUp(pi);
         }
         
@@ -49,8 +54,22 @@ namespace FazEngine2D.Core
             Directory.CreateDirectory(SaveLoc + @"\Sounds");
             Directory.CreateDirectory(SaveLoc + @"\Sprites");
             Directory.CreateDirectory(SaveLoc + @"\Music");
-            Debug.Log($"Directory Saves in {Directory.GetCurrentDirectory()}");
-            pi.Start();
+            Log($"Directory Saves in {Directory.GetCurrentDirectory()}");
+            foreach (PreloadedObject p in pi.PreloadedObjects)
+            {
+                EnginePreloader.preloadedObjects.Add(p);
+                Debug.Preload($"{p.Name} : {p.GetType().Name} get Preloaded from Project");
+                p.PreloadState();
+                
+            }
+            try
+            {
+                Task.Run(() => pi.Start());
+            } catch (Exception e)
+            {
+                Log($"Faz Engine Caught an error from {pi.Name}'s start method\n{e.Message}\n{e.StackTrace}");
+            }
+            Log(pi.Name + " got started from Faz Engine!");
         }
     }
 }

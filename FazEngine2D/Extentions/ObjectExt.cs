@@ -7,7 +7,7 @@ namespace FazEngine2D.Extentions
     {
         public static GameObject ConvertToGameObject(this object obj, string name)
         {
-            return new GameObject(name, obj, Core.EngineInstance.Windows[0]);
+            return new GameObject(name, Core.EngineInstance.FazEngineWindows[0]);
         }
         public static void Destroy(this Script script, GameObject gameObject)
         {

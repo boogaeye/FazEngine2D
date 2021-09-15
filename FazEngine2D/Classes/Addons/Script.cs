@@ -12,19 +12,33 @@ namespace FazEngine2D.Classes.Addons
 
     public class Script : Addon
     {
+        
         public virtual void Start()
         {
             this.Log("Has started");
         }
-        public virtual void Update(int frameNumber)
+        public virtual void Update()
         {
 
         }
         public virtual void KeyPressEvent(Keys k, KeyPressType kt)
         {
-            if (k == Keys.Escape && kt == KeyPressType.Down)
+            
+        }
+        public override void CallFunctionsBasedOnValue(byte b)
+        {
+            switch (b)
             {
-                GameObject.Scene.Dispose();
+                case 0:
+                    Start();
+                    break;
+                case 1:
+                    Update();
+                    break;
+                case 2:
+                    Start();
+                    Update();
+                    break;
             }
         }
     }

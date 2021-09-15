@@ -6,29 +6,35 @@ using System.Threading.Tasks;
 
 namespace FazEngine2D.Classes.Addons
 {
-    using FazEngine2D.Core;
-    public abstract class Addon : IDisposable
+    using FazEngine2D.Extentions;
+    public abstract class Addon : NamableObject
     {
         public GameObject GameObject { get; private set; }
         public object Obj { get => this; }
-        public string Name { get => GetType().Name; }
+        public new string Name { get => this.GetType().Name; }
         public bool IsActive = true;
         bool setGO = false;
         public bool Disposed { get; private set; } = false;
+        public abstract void CallFunctionsBasedOnValue(byte b);
         public void SetGameObject(GameObject gameObject)
         {
             if (setGO)
             {
-                Debug.Warn("Setting this addons GameObject is NOT possible anymore");
+                this.Warn("Setting this addons GameObject is NOT possible anymore");
                 return;
             }
             setGO = true;
             GameObject = gameObject;
         }
-
-        public void Dispose()
+        public override string ToString()
+        {
+            return $"{Name}";
+        }
+        public override void Dispose()
         {
             Disposed = true;
+            GameObject.Addons.Remove(this);
+            GameObject = null;
         }
         
     }
