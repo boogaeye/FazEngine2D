@@ -16,6 +16,9 @@ namespace FazEngine2D.Classes
     using FazEngine2D.Core;
     public class GameObject : NamableObject, IDisposable
     {
+        /// <summary>
+        /// Gets the window the Object is currently in
+        /// </summary>
         public FazEngineWindow FazEngineWindow;
         public List<Addon> Addons = new List<Addon>();
         public GameObjectTransform Transform { get; } = new GameObjectTransform();
@@ -30,6 +33,10 @@ namespace FazEngine2D.Classes
             
             return FazEngine2D.Core.EngineInstance.FazEngineWindows[0].FindGameObjectByName(name);
         }
+        /// <summary>
+        /// Adds an addon that isnt already an instance
+        /// </summary>
+        /// <param name="addon">Addon Type</param>
         public void AddAddon(Addon addon)
         {
             if (this.GetType().GetCustomAttributes(typeof(NonAddonAdder)).Any())
@@ -49,6 +56,11 @@ namespace FazEngine2D.Classes
             Addons.Add(addon);
             addon.Log($"Added {addon.Name} to {Name}");
         }
+        /// <summary>
+        /// Gets an Active Addon Otherwise it returns null
+        /// </summary>
+        /// <typeparam name="T">Addon Type</typeparam>
+        /// <returns>Active Addon</returns>
         public T GetAddon<T>() where T : Addon
         {
             foreach (T a in Addons.Where(e => e.GetType() == typeof(T) && e.IsActive))
@@ -57,6 +69,11 @@ namespace FazEngine2D.Classes
             }
             return null;
         }
+        /// <summary>
+        /// Gets any type of Addon of a type otherwise it will return null
+        /// </summary>
+        /// <typeparam name="T">Addon Type</typeparam>
+        /// <returns>An Addon</returns>
         public T GetAllAddon<T>() where T : Addon
         {
             foreach (T a in Addons.Where(e => e.GetType() == typeof(T)))
@@ -65,15 +82,27 @@ namespace FazEngine2D.Classes
             }
             return null;
         }
+        /// <summary>
+        /// Returns a list of Active Addons
+        /// </summary>
+        /// <typeparam name="T">Addon Type</typeparam>
+        /// <returns>Active Addons</returns>
         public Addon[] GetAddons<T>() where T : Addon
         {
             return Addons.Where(e => e.GetType() == typeof(T) || e.GetType().BaseType == typeof(T) && e.IsActive).ToArray();
         }
+        /// <summary>
+        /// Returns a list of All Addons of a type
+        /// </summary>
+        /// <typeparam name="T">Addon Type</typeparam>
+        /// <returns>Addons</returns>
         public Addon[] GetAllAddons<T>() where T : Addon
         {
             return Addons.Where(e => e.GetType() == typeof(T) || e.GetType().BaseType == typeof(T)).ToArray();
         }
-
+        /// <summary>
+        /// Destroy this object and all of its addons
+        /// </summary>
         public override void Dispose()
         {
             base.Dispose();
@@ -124,7 +153,7 @@ namespace FazEngine2D.Classes
         }
         public override string ToString()
         {
-            string reff = $"{Name} : [";
+            string reff = $"{Name}\n[pos:{this.Transform.Position}, scale: {this.Transform.Scale}]\nAddons:\n[";
             foreach (Addon addon in Addons)
             {
                 reff += $"({addon.Name} : {addon.IsActive}), ";

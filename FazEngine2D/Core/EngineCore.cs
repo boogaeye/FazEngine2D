@@ -11,22 +11,58 @@ using FazEngine2D.Classes.Addons;
 
 namespace FazEngine2D.Core
 {
+    /// <summary>
+    /// Engine Instance That gets started by the preloader and Creates Project Files
+    /// </summary>
     public sealed class EngineInstance
     {
         public static List<FazEngineWindow> FazEngineWindows = new List<FazEngineWindow>();
-        public static EngineInstance Instance;
         public static string SaveLoc;
         public static string Name;
+        public static ProjectInfo Project;
         public static bool EngineDebug = false;
+        /// <summary>
+        /// Closes all the engines windows as well as the engine itself useful for closing the game completely
+        /// </summary>
+        public static void CloseEngine()
+        {
+            foreach (FazEngineWindow fw in FazEngineWindows)
+            {
+                fw.Dispose();
+            }
+            Environment.Exit(0);
+        }
+        /// <summary>
+        /// Close all the engines windows while keeping the engine Open and Running
+        /// </summary>
+        public static void CloseWindows()
+        {
+            foreach (FazEngineWindow fw in FazEngineWindows)
+            {
+                fw.Dispose();
+            }
+        }
+        /// <summary>
+        /// Gets your project as its project type
+        /// </summary>
+        /// <typeparam name="T">Your Project Class</typeparam>
+        /// <returns>Your Project as its Class Type</returns>
+        public static T GetProjectAsType<T>() where T : ProjectInfo
+        {
+            return (T)Project;
+        }
         void Log(object debug, bool Beep = false)
         {
             if (Beep) Console.Beep();
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine("[Engine]" + debug.ToString());
         }
+        /// <summary>
+        /// Method called for starting up the engine ONLY CALL THIS ONCE
+        /// </summary>
+        /// <param name="pi">Project Class</param>
         public void EngineStartUp(ProjectInfo pi)
         {
-            Instance = this;
             Log("Starting Faz Engine...");
             Log(Directory.GetCurrentDirectory());
             Log("Waiting For Project...");
@@ -62,6 +98,7 @@ namespace FazEngine2D.Core
                 p.PreloadState();
                 
             }
+            Project = pi;
             try
             {
                 Task.Run(() => pi.Start());

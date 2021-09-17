@@ -15,6 +15,10 @@ namespace FazEngine2D.Classes.Addons
         public bool IsActive = true;
         bool setGO = false;
         public bool Disposed { get; private set; } = false;
+        /// <summary>
+        /// Calls functions based on byte value 0 => Starter Functions, 1 => Update Functions, 2 => All Important Functions
+        /// </summary>
+        /// <param name="b">Value</param>
         public abstract void CallFunctionsBasedOnValue(byte b);
         public void SetGameObject(GameObject gameObject)
         {

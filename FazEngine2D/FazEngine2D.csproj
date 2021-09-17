@@ -75,6 +75,7 @@
     <Compile Include="Attributes\NonAddonAdder.cs" />
     <Compile Include="Classes\Addons\Addon.cs" />
     <Compile Include="Classes\Addons\PreloadedObject.cs" />
+    <Compile Include="Classes\Addons\Visual\Collider2D.cs" />
     <Compile Include="Classes\Addons\Visual\Camera.cs" />
     <Compile Include="Classes\Addons\Visual\Rendering\TextRenderObject.cs" />
     <Compile Include="Classes\Addons\Visual\Rendering\SpriteRenderObject.cs" />

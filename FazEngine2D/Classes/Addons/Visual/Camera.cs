@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FazEngine2D.Classes.Addons.Visual
 {
     
-    public class Camera : Addon
+    public sealed class Camera : Addon
     {
         public bool SizeFixerEnabled = true;
 
@@ -18,11 +18,11 @@ namespace FazEngine2D.Classes.Addons.Visual
 
         public void SetRenderingCamera()
         {
-            //GameObject.Scene.CurrentRenderingCamera = this;
+            GameObject.FazEngineWindow.SetCamera(this);
         }
-        public void SetRenderingCamera(FazEngineWindow gameWindow)
+        public bool CanRenderCamera(FazEngineWindow fazEngineWindow)
         {
-            //gameWindow.CurrentRenderingCamera = this;
+            return GameObject.FazEngineWindow == fazEngineWindow || !IsActive;
         }
     }
 }

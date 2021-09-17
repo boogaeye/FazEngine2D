@@ -12,7 +12,7 @@ namespace FazEngine2D.Classes.Addons
         public abstract void PreloadState();
         public override string ToString()
         {
-            return $"[PreloadObj]{Name}";
+            return $"[PreloadObj : {this.GetType().Name}]{Name}";
         }
     }
 }

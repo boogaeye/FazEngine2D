@@ -6,18 +6,46 @@ using System.Threading.Tasks;
 
 namespace FazEngine2D.Classes.Input
 {
-    using System.Windows.Input;
     using FazEngine2D.Classes.Addons;
     using FazEngine2D.Attributes;
-    public class InputEvent
+    using System.Windows.Forms;
+    using FazEngine2D.Extentions;
+    [Obsolete("Can not be used... use KeyPressEvent will be deleted soon")]
+    [OnlyAddableTo(typeof(FazEngineWindow))]
+    public sealed class InputEvent : Addon
     {
-        public static bool KeyDown(Key key)
+        List<Keys> DownKeys = new List<Keys>();
+        List<Keys> UpKeys = new List<Keys>();
+        List<Keys> WaitingUpKeys = new List<Keys>();
+        List<Keys> PressedKeys = new List<Keys>();
+        public void KeyUpdate(Keys k, KeyPressType kpt)
         {
-            return Keyboard.IsKeyDown(key);
+            
         }
-        public static bool KeyUp(Key key)
+        public bool KeyDown(Keys key)
         {
-            return Keyboard.IsKeyUp(key);
+            return DownKeys.Contains(key);
+        }
+        public bool KeyUp(Keys key)
+        {
+            return UpKeys.Contains(key);
+        }
+        public bool KeyPressed(Keys key)
+        {
+            return PressedKeys.Contains(key);
+        }
+        void Update()
+        {
+            
+        }
+        public override void CallFunctionsBasedOnValue(byte b)
+        {
+            switch (b)
+            {
+                case 3:
+                    Update();
+                    break;
+            }
         }
     }
     public enum KeyPressType

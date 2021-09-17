@@ -60,9 +60,9 @@ namespace FazEngine2D.Classes.Addons.Visual.Rendering
         {
             return new Vector2(GetImage().Width - Screen.PrimaryScreen.Bounds.X , GetImage().Height  - Screen.PrimaryScreen.Bounds.Y);
         }
-        public Vector2 BottomLeft()
+        public Vector2 BottomLeft(FazEngineWindow fazEngineWindow)
         {
-            return new Vector2(0, GetImage().Height - Screen.PrimaryScreen.Bounds.Y);
+            return new Vector2(0, GetImage().Height - fazEngineWindow.WinSize.Y);
         }
         public Vector2 BottomMiddle()
         {

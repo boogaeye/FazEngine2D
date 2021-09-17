@@ -17,6 +17,8 @@ namespace FazEngine2D.Classes.Addons.Visual.Rendering
         public string Text;
         public int Width;
         public int Height;
+        public Brush TextColor = Brushes.Black;
+        public int FontSize = 10;
 
 
         public void SetText(string test)

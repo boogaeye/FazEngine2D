@@ -44,16 +44,26 @@ namespace FazEngine2D.Core
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("[PreloadedObject]" + debug.ToString());
         }
-        public static void DebugWindow(FazEngineWindow gameWindow)
+        public static void DebugWindow(FazEngineWindow gameWindow, Brush brush = null, int FontSize = 8, KnownColor WindowColor = KnownColor.Purple)
         {
-            var gw = new FazEngineWindow(color: KnownColor.Purple, windowWarn: false);
+            var gw = new FazEngineWindow(color: WindowColor, windowWarn: false);
             gw.Name = "Debugging Window";
             var go = new GameObject("TextObj", gw);
             var cam = new GameObject("CameraObj", gw);
             go.AddAddon(new TextRenderObject());
             cam.AddAddon(new Camera());
             TextRenderObject tro = go.GetAddon<TextRenderObject>();
-            gw.AddAddon(new DebugWindow(tro, gameWindow, cam));
+            gw.Camera = cam.GetAddon<Camera>();
+            if (brush == null)
+            {
+                tro.TextColor = Brushes.White;
+            }
+            else
+            {
+                tro.TextColor = brush;
+            }
+            tro.FontSize = FontSize;
+            gw.AddAddon(new DebugWindow(tro, gameWindow, gw, cam));
             //gw.ChangeBGColor(System.Drawing.Color.Purple);
         }
 
@@ -62,39 +72,53 @@ namespace FazEngine2D.Core
     public sealed class DebugWindow : Script
     {
         public TextRenderObject Text;
-        public FazEngineWindow GWTrack;
+        public FazEngineWindow GWTrack, DWindow;
         public Camera Camera;
-        public DebugWindow(TextRenderObject w, FazEngineWindow gameWindow, GameObject Cam)
+        public DebugWindow(TextRenderObject w, FazEngineWindow gameWindow, FazEngineWindow Dwin, GameObject Cam)
         {
-            Cam.Dispose();
             Text = w;
             GWTrack = gameWindow;
-            //Camera = Cam.GetAddon<Camera>();
+            Camera = Cam.GetAddon<Camera>();
+            DWindow = Dwin;
         }
         public override void Start()
         {
             base.Start();
-            //Camera.SetRenderingCamera();
+            
         }
         public override void Update()
         {
             base.Update();
-            Text.Text = $"Frame SafeTime: {GWTrack.FrameSafeTime}\nStray Frames: {GWTrack.StrayFrames}\nFrames: {GWTrack.FramesAlive}\nForceResets: {GWTrack.ForceResets}";
-            foreach (PreloadedObject preloadedObject in EnginePreloader.preloadedObjects)
+            if (GWTrack.gameObjects.Count != 0)
             {
-                Text.Text += $"\n{preloadedObject}";
+                Text.Text = $"Frame SafeTime: {GWTrack.FrameSafeTime}\nStray Frames: {GWTrack.StrayFrames}\nFrames: {GWTrack.FramesAlive}\nForceResets: {GWTrack.ForceResets}";
+                Text.Text += "\n\n{Preloaded Objects}";
+                foreach (PreloadedObject preloadedObject in EnginePreloader.preloadedObjects)
+                {
+                    Text.Text += $"\n\n{preloadedObject}";
+                }
+                Text.Text += "\n\n{Engine Window Objects}";
+                foreach (GameObject g in GWTrack.gameObjects)
+                {
+                    Text.Text += $"\n\n{g}";
+                }
             }
-            foreach (GameObject g in GWTrack.gameObjects)
+            else
             {
-                Text.Text += $"\n{g}";
+                if (!DWindow.Disposed)
+                GameObject.FazEngineWindow.Dispose();
             }
         }
         public override void KeyPressEvent(Keys k, KeyPressType kt)
         {
             base.KeyPressEvent(k, kt);
-            if (k == Keys.S)
+            if (k == Keys.S && kt == KeyPressType.Down)
             {
                 Camera.GameObject.Transform.Position -= new Vector2(0, -10);
+            }
+            if (k == Keys.W && kt == KeyPressType.Down)
+            {
+                Camera.GameObject.Transform.Position -= new Vector2(0, 10);
             }
         }
     }

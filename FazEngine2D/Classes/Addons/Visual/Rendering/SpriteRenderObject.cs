@@ -51,6 +51,10 @@ namespace FazEngine2D.Classes.Addons.Visual.Rendering
                 this.Error($"File Not Found 404\n{e.Message}");
             }
         }
+        public void SetBottomLeft()
+        {
+            GameObject.Transform.Position = new Vector2(0, CropHeight - GameObject.FazEngineWindow.WinSize.Y);
+        }
         public void ChangeImageAnimation(int AnimationNumber)
         {
             if (Image != null)
